@@ -15,4 +15,4 @@ from simulacao import MM1
 ```
 
 ### `Demo`
-Para visualizar como a biblioteca pode ser utilizada para gerar simulações e modelos de fila M/M/1, visite a demonstração, a qual contém alguns exemplos de código usando a biblioteca.
+Para visualizar como a biblioteca pode ser utilizada para gerar simulações e modelos de fila M/M/1, cheque a [demonstração](https://github.com/rafael2ll/ms-mm1/blob/master/simulacao/Demo.ipynb), a qual contém alguns exemplos de código usando a biblioteca.
