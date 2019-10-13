@@ -85,9 +85,9 @@ Retorna um objeto do tipo `Simulacao`.
 
 Params:
 ```
-variaveis: Variaveis
-tempo_limite: int
-clientes: int
+variaveis: Variaveis (default = Variveis())
+tempo_limite: int (default = -1)
+clientes: int (default = -1)
 ```
 
 Uso: 

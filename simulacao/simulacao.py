@@ -100,7 +100,7 @@ class GeradorSimulacaoExponencial:
             vars = Variaveis()
             vars.set_tes(Distribuicoes.EXPONENCIAL.value['func'])
             vars.set_tec(Distribuicoes.EXPONENCIAL.value['func'])
-            s = Simulacao(variaveis=vars, tempo_limite=1000)
+            s = Simulacao(variaveis=vars, tempo_limite=100000)
             s.simular_tudo()
             df = s.get_tabela()
             chegada = sum(df['tec'])/len(df['cliente'])
