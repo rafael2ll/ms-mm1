@@ -3,18 +3,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from simulacao import *
 
-class MM1:
+class MM2:
     def __init__(self, df = None, chegada = None, atendimento = None):  
         if df is not None:
             self.chegada = sum(df['tec'])/len(df['cliente'])
             self.atendimento = sum(df['tes'])/len(df['cliente'])
-            self.intensidadeTrafego = self.chegada/self.atendimento
+            self.intensidadeTrafego = self.chegada/(2 * self.atendimento)
             self.ociosidade = 1 - self.intensidadeTrafego
             
         else:
             self.chegada = chegada
             self.atendimento = atendimento
-            self.intensidadeTrafego = self.chegada/self.atendimento
+            self.intensidadeTrafego = self.chegada/(2 * self.atendimento)
             self.ociosidade = 1 - self.intensidadeTrafego
         
     def setProbabilidadeFila(self):
