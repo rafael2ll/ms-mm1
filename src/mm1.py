@@ -87,7 +87,12 @@ class MM1:
         plt.xticks(y_pos, objects)
         plt.ylabel('Unidade')
         plt.title('Métricas de Clientes do Sistema')
-        plt.show()
+
+    def plot(self):
+        self.plotMetricasGerais()
+        self.plotMetricasCliente()
+        self.plotMetricasTempo()
+        plt.plot()
         
     def gerarTabelaMM1(self):
         colunas = ['λ', 'μ', 'ρ', '1 - ρ', 'W', 'Ws', 'Wq', 'L', 'Ls', 'Lq']

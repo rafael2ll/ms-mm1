@@ -1,4 +1,7 @@
-from simulacao.simulacao import *
+from simulacao import *
+from simulacao_mm2 import SimulacaoMM2, GeradorSimulacaoExponencialMM2
+from mm1 import MM1
+from mm2 import MM2
 
 if __name__ == '__main__':
     print('Simulaçao')
@@ -47,8 +50,17 @@ if __name__ == '__main__':
     simulacao.simular_tudo()
     df = simulacao.get_tabela()
     print(df)
+    print('M/M/1')
     mm1 = MM1(df)
     mm1.calcularTudo()
-    gerais = mm1.plotMetricasGerais()
-    cliente = mm1.plotMetricasCliente()
-    tempo = mm1.plotMetricasTempo()
+    print(mm1.gerarTabelaMM1())
+    mm1.plot()
+    print('M/M/2')
+    simulacao = SimulacaoMM2(variaveis = vars, tempo_limite =tempo_limite, clientes=numero_clientes)
+    simulacao.simular_tudo()
+    df = simulacao.get_tabela()
+    print(df)
+    mm2 = MM2(df)
+    mm2.calcularTudo()
+    print(mm2.gerarTabelaMM2())
+    mm2.plot()

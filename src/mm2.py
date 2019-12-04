@@ -8,37 +8,39 @@ class MM2:
         if df is not None:
             self.chegada = sum(df['tec'])/len(df['cliente'])
             self.atendimento = sum(df['tes'])/len(df['cliente'])
-            self.intensidadeTrafego = self.chegada/(2 * self.atendimento)
+            self.intensidadeTrafego = (self.chegada / 2) / self.atendimento
             self.ociosidade = 1 - self.intensidadeTrafego
             
         else:
             self.chegada = chegada
             self.atendimento = atendimento
-            self.intensidadeTrafego = self.chegada/(2 * self.atendimento)
+            self.intensidadeTrafego = (self.chegada /2 )/self.atendimento
             self.ociosidade = 1 - self.intensidadeTrafego
         
     def setProbabilidadeFila(self):
-        pi0 = self.ociosidade
-        pi1 = self.intensidadeTrafego * (1 - self.intensidadeTrafego)
-        self.probabilidadeFila = 1 - pi0 - pi1
+        # Pq = 2ro²/1+ro
+        self.probabilidadeFila = (2*(self.intensidadeTrafego**2))/1+self.intensidadeTrafego
     
     def setL(self):
-        self.l = self.chegada/(self.atendimento - self.chegada)
+        # L = 2ro + ((ro*Pq)/(1-ro))
+        self.l = 2*self.intensidadeTrafego+ (self.intensidadeTrafego*self.probabilidadeFila)/(1-self.intensidadeTrafego)
         
     def setLs(self):
-        self.ls = self.intensidadeTrafego
+        # Ls = (1/mi)/(1-ro²)
+        self.ls = (1/self.atendimento)/(1- self.intensidadeTrafego**2)
     
     def setLq(self):
         self.lq = self.intensidadeTrafego**2/(1- self.intensidadeTrafego)
     
     def setW(self):
-        self.w = 1/(self.atendimento - self.chegada)
-    
+        # W = (1/mi)/(1-ro²)
+        self.w = (1/self.atendimento)/(1- self.intensidadeTrafego**2)   
+
     def setWs(self):
         self.ws = 1/self.atendimento
     
     def setWq(self):
-        self.wq = self.chegada/(self.atendimento * (self.atendimento - self.chegada))
+        self.wq = self.w - self.ws
     
     def calcularTudo(self):
         self.setProbabilidadeFila()
@@ -87,9 +89,14 @@ class MM2:
         plt.xticks(y_pos, objects)
         plt.ylabel('Unidade')
         plt.title('Métricas de Clientes do Sistema')
-        plt.show()
-        
-    def gerarTabelaMM1(self):
+
+    def plot(self):
+        self.plotMetricasGerais()
+        self.plotMetricasCliente()
+        self.plotMetricasTempo()
+        plt.plot()
+                
+    def gerarTabelaMM2(self):
         colunas = ['λ', 'μ', 'ρ', '1 - ρ', 'W', 'Ws', 'Wq', 'L', 'Ls', 'Lq']
         dic = dict.fromkeys(colunas, True)
         dic['λ'] = self.chegada

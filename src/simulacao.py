@@ -12,21 +12,28 @@ class Simulacao:
         self.numero_clientes = clientes
     
     def simular_tudo(self):
-        self.simulacao = []
-        if self.numero_clientes > 0:
-            for i in range(self.numero_clientes):
-                self.simular()
-        elif self.tempo_limite > 0:
-            tempo_relogio = 0
-            while tempo_relogio < self.tempo_limite:
-                self.simular()
-                tempo_relogio = self.simulacao[-1]["tempo_final_servico_relogio"]
+        while True:
+            self.simulacao = []
+            if self.numero_clientes > 0:
+                for i in range(self.numero_clientes):
+                    self.simular()
+            elif self.tempo_limite > 0:
+                tempo_relogio = 0
+                while tempo_relogio < self.tempo_limite:
+                    self.simular()
+                    tempo_relogio = self.simulacao[-1]["tempo_final_servico_relogio"]
+            df  = self.get_tabela()
+            chegada = sum(df['tec'])/len(df['cliente'])
+            atendimento = sum(df['tes'])/len(df['cliente'])
+            if atendimento > chegada:
+                break
+                
     def simular(self):
         if len(self.simulacao) == 0:
             cliente = 1
-            tec = abs(self.variaveis.tec_funcao()*10)
+            tec = abs(self.variaveis.tec_funcao())
             tempo_chegada_relogio = tec
-            tes = abs(self.variaveis.tes_funcao()*10)
+            tes = abs(self.variaveis.tes_funcao())
             tempo_inicio_servico_relogio = tec
             tempo_fila = 0
             tempo_final_servico_relogio= tec+tes
@@ -34,9 +41,9 @@ class Simulacao:
             tempo_livre_operador = tec
         else:
             cliente = self.simulacao[-1]['cliente']+1   
-            tec = abs(self.variaveis.tec_funcao()*10)
+            tec = abs(self.variaveis.tec_funcao())
             tempo_chegada_relogio =  self.simulacao[-1]['tempo_chegada_relogio'] +tec
-            tes = abs(self.variaveis.tes_funcao()*10)
+            tes = abs(self.variaveis.tes_funcao())
             tempo_inicio_servico_relogio = max([tempo_chegada_relogio, self.simulacao[-1]['tempo_final_servico_relogio']])
             tempo_fila = max([0,  self.simulacao[-1]['tempo_final_servico_relogio'] - tempo_chegada_relogio])
             tempo_final_servico_relogio= tempo_chegada_relogio+tempo_fila+tes
