@@ -15,42 +15,41 @@ class MM2:
             self.chegada = chegada
             self.atendimento = atendimento
             self.intensidadeTrafego = (self.chegada /2 )/self.atendimento
-            self.ociosidade = 1 - self.intensidadeTrafego
-        
+            self.ociosidade =  1- self.intensidadeTrafego
     def setProbabilidadeFila(self):
-        # Pq = 2ro²/1+ro
-        self.probabilidadeFila = (2*(self.intensidadeTrafego**2))/1+self.intensidadeTrafego
-    
-    def setL(self):
-        # L = 2ro + ((ro*Pq)/(1-ro))
-        self.l = 2*self.intensidadeTrafego+ (self.intensidadeTrafego*self.probabilidadeFila)/(1-self.intensidadeTrafego)
-        
-    def setLs(self):
-        # Ls = (1/mi)/(1-ro²)
-        self.ls = (1/self.atendimento)/(1- self.intensidadeTrafego**2)
+        self.probabilidadeFila = 1/(1+(2*self.intensidadeTrafego)+(self.intensidadeTrafego**2)/(1-self.intensidadeTrafego))
     
     def setLq(self):
-        self.lq = self.intensidadeTrafego**2/(1- self.intensidadeTrafego)
+        self.lq = (self.probabilidadeFila*self.intensidadeTrafego)/(1-self.intensidadeTrafego)
+        
+    def setLs(self):
+        self.ls = self.chegada/self.atendimento
     
-    def setW(self):
-        # W = (1/mi)/(1-ro²)
-        self.w = (1/self.atendimento)/(1- self.intensidadeTrafego**2)   
-
-    def setWs(self):
-        self.ws = 1/self.atendimento
+    def setL(self):
+        self.l = self.lq + self.ls
     
     def setWq(self):
-        self.wq = self.w - self.ws
+        self.wq = self.lq/self.chegada
+
+    def setW(self):
+        self.w = self.wq + 1/self.atendimento
+
+    def setWs(self):
+        self.ws =self.w - self.wq
+    
+ 
     
     def calcularTudo(self):
         self.setProbabilidadeFila()
-        self.setL()
         self.setLq()
         self.setLs()
+        self.setL()
+        self.setWq()
         self.setW()
         self.setWs()
-        self.setWq()
+        
     
+     
     def plotPieGraph(self, labels, metrics, colors, title):
         fig1, ax1 = plt.subplots()
         ax1.pie(metrics, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=90)
@@ -76,7 +75,7 @@ class MM2:
         
     def plotMetricasTempo(self):
         labels = ['Ws', 'Wq']
-        metrics = [self.ws, self.wq]
+        metrics = [self.ws*100/self.w, self.wq*100/self.w]
         colors = ['orange', 'cornflowerblue']
         self.plotPieGraph(labels, metrics, colors, 'Métricas de Tempo do Sistema')
     
@@ -95,7 +94,10 @@ class MM2:
         self.plotMetricasCliente()
         self.plotMetricasTempo()
         plt.plot()
-                
+    
+    def fatorial(n):
+        return fatorial(n-1) if n > 0 else 1
+
     def gerarTabelaMM2(self):
         colunas = ['λ', 'μ', 'ρ', '1 - ρ', 'W', 'Ws', 'Wq', 'L', 'Ls', 'Lq']
         dic = dict.fromkeys(colunas, True)
