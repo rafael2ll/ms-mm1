@@ -19,7 +19,7 @@ wq: float
 ```
 
 ##### `init`
-Retorna um objeto do tipo `MM1`. 
+Retorna um objeto do tipo `MM2`. 
 
 Params:
 ```
