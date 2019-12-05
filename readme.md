@@ -1,4 +1,4 @@
-## `Simulação e M/M/1`
+## `Simulação, M/M/1e M/M/2`
 
 ### `Instalação`
 ```
@@ -14,8 +14,8 @@ from simulacao import Distribuicoes
 from simulacao import Variaveis
 from simulacao import Simulacao
 from simulacao import GeradorSimulacaoExponencial
-from simulacao import MM1
-from simulacao_mm2 import SimulacaoMM2
+from simulacao import MM1, SImulacao
+from simulacao_mm2 import MM2, SimulacaoMM2
 ```
 
 ### `Demo`
