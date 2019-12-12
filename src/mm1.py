@@ -74,7 +74,7 @@ class MM1:
         
     def plotMetricasTempo(self):
         labels = ['Ws', 'Wq']
-        metrics = [self.ws, self.wq]
+        metrics = [self.ws*100/(self.ws + self.wq), self.wq*100/(self.ws + self.wq)]
         colors = ['orange', 'cornflowerblue']
         self.plotPieGraph(labels, metrics, colors, 'Métricas de Tempo do Sistema')
     

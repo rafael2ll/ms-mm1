@@ -93,7 +93,7 @@ class MM2:
         self.plotMetricasGerais()
         self.plotMetricasCliente()
         self.plotMetricasTempo()
-        plt.plot()
+        #plt.plot()
     
     def fatorial(n):
         return fatorial(n-1) if n > 0 else 1
