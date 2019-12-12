@@ -6,49 +6,71 @@ from simulacao import *
 class MM2:
     def __init__(self, df = None, chegada = None, atendimento = None):  
         if df is not None:
-            self.chegada = sum(df['tec'])/len(df['cliente'])
-            self.atendimento = sum(df['tes'])/len(df['cliente'])
-            self.intensidadeTrafego = (self.chegada / 2) / self.atendimento
-            self.ociosidade = 1 - self.intensidadeTrafego
+            #self.chegada = sum(df['tec'])/len(df['cliente'])
+            #self.atendimento = sum(df['tes'])/len(df['cliente'])
+            #self.intensidadeTrafego = (self.chegada / 2) / self.atendimento
+            pass
             
         else:
+            self.s = 2
             self.chegada = chegada
             self.atendimento = atendimento
-            self.intensidadeTrafego = (self.chegada /2 )/self.atendimento
-            self.ociosidade =  1- self.intensidadeTrafego
-    def setProbabilidadeFila(self):
-        self.probabilidadeFila = 1/(1+(2*self.intensidadeTrafego)+(self.intensidadeTrafego**2)/(1-self.intensidadeTrafego))
+            self.intensidadeTrafego = self.chegada/(self.atendimento * self.s)
+    
+    def setPi0(self):
+        i = 0
+        soma = 0
+        
+        while i <= self.s - 1:
+            fat = self.fatorial(i)
+            soma += ((self.s * self.intensidadeTrafego)**i)/fat
+            i = i + 1
+            
+        soma += ((self.s * self.intensidadeTrafego)**self.s)/(self.fatorial(self.s) * (1 - self.intensidadeTrafego))
+        self.pi0 = 1/soma
+        
+    def setPj(self):
+        # Define a probabilidade de todos os servidores estarem ocupados
+        self.setPi0()
+        self.pj = ( ((self.s * self.intensidadeTrafego)**self.s) * self.pi0)
+        self.pj = self.pj/(self.fatorial(self.s) * (1 - self.intensidadeTrafego))
     
     def setLq(self):
-        self.lq = (self.probabilidadeFila*self.intensidadeTrafego)/(1-self.intensidadeTrafego)
-        
+        self.setPj()
+        self.lq = (self.pj * self.intensidadeTrafego)/(1 - self.intensidadeTrafego)
+    
     def setLs(self):
-        self.ls = self.chegada/self.atendimento
+        # L = Ls + Lq -> Ls = L - Lq
+        self.setL()
+        self.ls = self.l - self.lq
     
     def setL(self):
-        self.l = self.lq + self.ls
+        self.setLq()
+        self.l = self.lq + (self.chegada/self.atendimento)
+    
+    def setWs(self):
+        # W = Ws + Wq -> Ws = W - Wq
+        self.setW()
+        self.setWq()
+        self.ws = self.w - self.wq
+    
+    def setW(self):
+        self.setL()
+        self.w = self.l/self.chegada
     
     def setWq(self):
+        self.setLq()
         self.wq = self.lq/self.chegada
-
-    def setW(self):
-        self.w = self.wq + 1/self.atendimento
-
-    def setWs(self):
-        self.ws =self.w - self.wq
-    
- 
     
     def calcularTudo(self):
-        self.setProbabilidadeFila()
+        self.setPi0()
+        self.setPj()
         self.setLq()
         self.setLs()
         self.setL()
-        self.setWq()
         self.setW()
         self.setWs()
-        
-    
+        self.setWq()
      
     def plotPieGraph(self, labels, metrics, colors, title):
         fig1, ax1 = plt.subplots()
@@ -68,8 +90,8 @@ class MM2:
         plt.show()
     
     def plotMetricasTrafego(self):
-        labels = ['ρ', '1 - ρ']
-        metrics = [self.intensidadeTrafego, self.ociosidade]
+        labels = ['ρ', 'π0']
+        metrics = [self.intensidadeTrafego, self.pi0]
         colors=['lightcoral', 'gray']
         self.plotPieGraph(labels, metrics, colors, 'Métricas de Tráfego do Sistema')
         
@@ -93,18 +115,26 @@ class MM2:
         self.plotMetricasGerais()
         self.plotMetricasCliente()
         self.plotMetricasTempo()
-        #plt.plot()
     
-    def fatorial(n):
-        return fatorial(n-1) if n > 0 else 1
+    def fatorial(self, n):
+            if n == 0 or n == 1: return 1
+        else: 
+            i = 2
+            fat = 1
+            while i <= n:
+                fat = fat * i
+                i = i + 1
+                
+            return fat
 
     def gerarTabelaMM2(self):
-        colunas = ['λ', 'μ', 'ρ', '1 - ρ', 'W', 'Ws', 'Wq', 'L', 'Ls', 'Lq']
+        self.calcularTudo()
+        colunas = ['λ', 'μ', 'ρ', 'π0', 'W', 'Ws', 'Wq', 'L', 'Ls', 'Lq']
         dic = dict.fromkeys(colunas, True)
         dic['λ'] = self.chegada
         dic['μ'] = self.atendimento
         dic['ρ'] = self.intensidadeTrafego
-        dic['1 - ρ'] = self.ociosidade
+        dic['π0'] = self.pi0
         dic['W'] = self.w
         dic['Ws'] = self.ws
         dic['Wq'] = self.wq
