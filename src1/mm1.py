@@ -1,7 +1,7 @@
 import numpy as np  
 import pandas as pd
 import matplotlib.pyplot as plt
-from simulacao import *
+#from simulacao import *
 
 class MM1:
     def __init__(self, df = None, chegada = None, atendimento = None):  
